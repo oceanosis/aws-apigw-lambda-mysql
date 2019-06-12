@@ -32,4 +32,6 @@ resource "aws_db_instance" "mysql-instance" {
   storage_type         = "gp2"
   backup_retention_period = 30
   availability_zone    = "${element(module.hwvpc.private_availability_zones,0) }"
+  skip_final_snapshot = true
+  final_snapshot_identifier = "mysql-hwdb"
 }

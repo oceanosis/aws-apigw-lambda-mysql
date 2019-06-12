@@ -1,0 +1,4 @@
+CREATE DATABASE IF NOT EXISTS hwdb;
+use hwdb;
+CREATE TABLE IF NOT EXISTS birthday ( username varchar(20) not null, dateofbirth varchar(20) not null, unixepoch int not null, constraint pk_hw primary key (username) );
+INSERT INTO birthday ( username,dateofbirth,unixepoch ) VALUES ( 'oceanosis', '26/10/1983',100000000 );
