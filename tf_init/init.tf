@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "tf_bucket" {
   bucket = "helloworld-tf-states"
+  force_destroy = false
 }
 
 resource "aws_s3_bucket_policy" "tf_bucket_policy" {
