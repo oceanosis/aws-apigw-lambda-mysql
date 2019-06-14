@@ -8,6 +8,7 @@
 *.tfstate
 *.tfstate.*
 *.out
+*.zip
 
 # Crash log files
 crash.log

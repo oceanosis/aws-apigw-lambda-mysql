@@ -31,6 +31,8 @@ def handler(event, context):
     This function ...
     un = "test10"
     """
+    print("Received event: " + json.dumps(event, indent=2))
+    un = event['ResourceProperties']['username']
     diff = -1
 
     with conn.cursor() as cur:

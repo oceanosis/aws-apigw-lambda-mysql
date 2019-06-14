@@ -30,6 +30,9 @@ def handler(event, context):
     un = "testuser"
     dob = "1983-10-26"
     """
+    print("Received event: " + json.dumps(event, indent=2))
+    un = event['ResourceProperties']['username']
+    dob = event['ResourceProperties']['dateOfBirth']
     ts = str ( convert_timestamp(dob))
     put_status = 0
 

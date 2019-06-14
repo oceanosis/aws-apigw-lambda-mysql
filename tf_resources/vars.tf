@@ -12,10 +12,6 @@ variable "trusted_ip_range" {
   default = "0.0.0.0/0"
 }
 
-variable "RDS_DBNAME" {
-  default = "hwdb"
-}
-
 variable "RDS_MULTI_AZ" {
   default = "false"
 }
@@ -24,4 +20,6 @@ variable "rds_instance_type" {
   default = "db.t2.micro"
 }
 
+variable "RDS_USERNAME" {}
 variable "RDS_PASSWORD" {}
+variable "RDS_DBNAME" {}

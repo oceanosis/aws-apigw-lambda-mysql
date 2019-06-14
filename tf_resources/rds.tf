@@ -23,7 +23,7 @@ resource "aws_db_instance" "mysql-instance" {
   instance_class       = "${var.rds_instance_type}"
   identifier           = "mysql"
   name                 = "${var.RDS_DBNAME}"
-  username             = "root"   # username
+  username             = "${var.RDS_USERNAME}"   # username
   password             = "${var.RDS_PASSWORD}"
   db_subnet_group_name = "${aws_db_subnet_group.mysql-subnet.name}"
   parameter_group_name = "${aws_db_parameter_group.mysql-parameters.name}"
