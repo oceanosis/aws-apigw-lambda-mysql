@@ -7,5 +7,8 @@
 export TF_VAR_AWS_ACCESS_KEY=""
 export TF_VAR_AWS_SECRET_KEY=""
 export TF_VAR_trusted_ip_range="$(curl http://ifconfig.co)/32"
-export TF_VAR_RDS_PASSWORD=""
+export TF_VAR_RDS_USERNAME="root"
+export TF_VAR_RDS_PASSWORD="password"
+export TF_VAR_RDS_DBNAME="hwdb"
+export TF_VAR_RDS_MULTI_AZ="false" # Change it to 'true' to have HA...
 ```
