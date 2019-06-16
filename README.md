@@ -26,9 +26,9 @@ make test API_URL={{ API URL }}
 
 # TEST API
 ```sh
-curl -v -X PUT https://{{ API URL }}/prod/hello/username?dateOfBirth=2018-01-01
+curl -vvv -X PUT https://{{ API URL }}/prod/hello/username?dateOfBirth=2018-01-01
 
-curl -v -X GET https://{{ API URL }}/prod/hello/username
+curl -vvv -X GET https://{{ API URL }}/prod/hello/username
 ```
 
 # TEST LAMBDA
