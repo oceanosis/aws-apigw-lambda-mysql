@@ -26,19 +26,16 @@ make test API_URL={{ API URL }}
 
 # TEST API
 ```sh
-curl -v -X PUT https://{{ API URL }}/prod/hello/username \
--H 'content-type: application/json' \
--d '{ "dateOfBirth": "2018-01-01" }'
+curl -v -X PUT https://jpaub6kn8k.execute-api.eu-west-2.amazonaws.com/prod/hello/username?dateOfBirth=2018-01-01
 
-curl -v -X GET https://{{ API URL }}/prod/hello/username \
--H 'content-type: application/json'
+curl -v -X GET https://jpaub6kn8k.execute-api.eu-west-2.amazonaws.com/prod/hello/username
 ```
 
 # TEST LAMBDA
 ```sh
 aws lambda invoke --function-name put_helloworld \
---invocation-type RequestResponse --payload file://test/lambda_put.json out_put.txt
+--invocation-type RequestResponse --payload file://test/lambda_put.json put_response.txt
 
 aws lambda invoke --function-name get_helloworld \
---invocation-type RequestResponse --payload file://test/lambda_get.json out_get.txt
+--invocation-type RequestResponse --payload file://test/lambda_get.json get_response.txt
 ```

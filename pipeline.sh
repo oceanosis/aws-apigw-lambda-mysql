@@ -8,11 +8,6 @@ terraform init
 terraform plan -out tf_init.out
 terraform apply tf_init.out
 
-cd $BASEDIR/lambda_py
-# zipping lambda rds confing without mysql connection
-zip -g put_helloworld.zip lambda_put.py rds_config.py
-zip -g get_helloworld.zip lambda_get.py rds_config.py
-
 cd $BASEDIR/tf_resources
 if [ ! -f $HOME/.ssh/automation ]; then
 ssh-keygen -t rsa -f $HOME/.ssh/automation -N ''
@@ -30,10 +25,12 @@ db_password = "$TF_VAR_RDS_PASSWORD"
 db_name = "$TF_VAR_RDS_DBNAME"
 EOL
 
-cd $BASEDIR/lambda_py
+cd $BASEDIR/lambda_py/lambda_put
 # push python rds config
-zip -g put_helloworld.zip lambda_put.py rds_config.py
-zip -g get_helloworld.zip lambda_get.py rds_config.py
+zip -g ../put_helloworld.zip lambda_put.py rds_config.py
+cd $BASEDIR/lambda_py/lambda_get
+zip -g ../get_helloworld.zip lambda_get.py rds_config.py
+cd $BASEDIR/lambda_py
 aws lambda update-function-code --function-name put_helloworld --zip-file fileb://put_helloworld.zip
 aws lambda update-function-code --function-name get_helloworld --zip-file fileb://get_helloworld.zip
 

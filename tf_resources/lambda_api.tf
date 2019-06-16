@@ -1,10 +1,22 @@
+data "archive_file" "lambda_get" {
+  type        = "zip"
+  source_dir  = "../lambda_py/lambda_get/"
+  output_path   = "../lambda_py/get_helloworld.zip"
+}
+
+data "archive_file" "lambda_put" {
+  type        = "zip"
+  source_dir  = "../lambda_py/lambda_put/"
+  output_path   = "../lambda_py/put_helloworld.zip"
+}
+
 resource "aws_lambda_function" "put_hw" {
   function_name = "put_helloworld"
-  filename      = "../lambda_py/put_helloworld.zip"
+  filename         = "${data.archive_file.lambda_put.output_path}"
   handler = "lambda_put.handler"
   runtime = "python3.6"
-  timeout = 100
-  #source_code_hash = "${base64sha256(file("../lambda_py/put_helloworld.zip"))}"
+  timeout = 10
+  source_code_hash = "${data.archive_file.lambda_put.output_base64sha256}"
   role = "${aws_iam_role.lambda_exec.arn}"
   vpc_config {
     subnet_ids = "${module.hwvpc.public_subnet_ids}"
@@ -14,15 +26,15 @@ resource "aws_lambda_function" "put_hw" {
 
 resource "aws_lambda_function" "get_hw" {
   function_name = "get_helloworld"
-  filename      = "../lambda_py/get_helloworld.zip"
+  filename         = "${data.archive_file.lambda_get.output_path}"
   handler = "lambda_get.handler"
   runtime = "python3.6"
-  timeout = 100
-  #source_code_hash = "${base64sha256(file("../lambda_py/put_helloworld.zip"))}"
+  timeout = 10
+  source_code_hash = "${data.archive_file.lambda_get.output_base64sha256}"
   role = "${aws_iam_role.lambda_exec.arn}"
   vpc_config {
-    subnet_ids = "${module.hwvpc.private_subnet_ids}"
-    security_group_ids = ["${aws_security_group.private-sg.id}"]
+    subnet_ids = "${module.hwvpc.public_subnet_ids}"
+    security_group_ids = ["${aws_security_group.public-sg.id}"]
   }
 }
 
@@ -109,6 +121,7 @@ resource "aws_api_gateway_method" "get_proxy" {
   request_parameters = {
     "method.request.path.proxy" = true
   }
+
 }
 
 resource "aws_api_gateway_method_response" "put_response_204" {
@@ -118,7 +131,7 @@ resource "aws_api_gateway_method_response" "put_response_204" {
   status_code = 204
 
   response_models = {
-    "application/json" = "Empty"
+    "application/json" = "hwmodel"
   }
 
   response_parameters = {
@@ -128,6 +141,27 @@ resource "aws_api_gateway_method_response" "put_response_204" {
   }
 }
 
+resource "aws_api_gateway_model" "hwmodel" {
+  rest_api_id  = "${aws_api_gateway_rest_api.helloworld_api.id}"
+  name         = "hwmodel"
+  description  = "a JSON schema"
+  content_type = "application/json"
+
+  schema = <<EOF
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "helloworld",
+  "type": "object",
+  "properties": {
+        "response": {
+            "type": "string"
+        }
+  },
+  "required": ["response"]
+}
+EOF
+}
+
 resource "aws_api_gateway_method_response" "get_response_200" {
   rest_api_id   = aws_api_gateway_rest_api.helloworld_api.id
   resource_id   = aws_api_gateway_resource.proxy_hello_part.id
@@ -135,7 +169,7 @@ resource "aws_api_gateway_method_response" "get_response_200" {
   status_code = 200
 
   response_models = {
-    "application/json" = "Empty"
+    "application/json" = "hwmodel"
   }
 
   response_parameters = {
@@ -149,26 +183,22 @@ resource "aws_api_gateway_integration" "lambda_put" {
   rest_api_id = "${aws_api_gateway_rest_api.helloworld_api.id}"
   resource_id = "${aws_api_gateway_method.put_proxy.resource_id}"
   http_method = "${aws_api_gateway_method.put_proxy.http_method}"
-  timeout_milliseconds = 29000
+  timeout_milliseconds = 10000
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = "${aws_lambda_function.put_hw.invoke_arn}"
-  request_templates = {
-    "application/json" = "{ 'username':'testuser', 'dateOfBirth':'2018-01-01'}"
-  }
+
 }
 
 resource "aws_api_gateway_integration" "lambda_get" {
   rest_api_id = "${aws_api_gateway_rest_api.helloworld_api.id}"
   resource_id = "${aws_api_gateway_method.get_proxy.resource_id}"
   http_method = "${aws_api_gateway_method.get_proxy.http_method}"
-  timeout_milliseconds = 29000
+  timeout_milliseconds = 10000
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = "${aws_lambda_function.get_hw.invoke_arn}"
-  request_templates = {
-    "application/json" = "{ 'username':'testuser'}"
-  }
+
 }
 
 resource "aws_api_gateway_deployment" "api_deployment" {
@@ -214,7 +244,7 @@ resource "aws_api_gateway_method_response" "options_204" {
   status_code = 204
 
   response_models = {
-    "application/json" = "Empty"
+    "application/json" = "hwmodel"
   }
 
   response_parameters = {
