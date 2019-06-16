@@ -35,3 +35,4 @@ resource "aws_db_instance" "mysql-instance" {
   skip_final_snapshot = true
   final_snapshot_identifier = "mysql-hwdb"
 }
+

@@ -24,5 +24,8 @@ __pycache__/
 env/
 venv/
 ENV/
+v-env/
 env.bak/
 venv.bak/
+
+*.txt

@@ -1,4 +1,4 @@
-import sys, os
+import sys
 import logging
 import rds_config
 import pymysql
@@ -22,8 +22,10 @@ except:
 
 logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
 
+
 def convert_timestamp(dateofbirth):
     return time.mktime(datetime.datetime.strptime(dateofbirth, "%Y-%m-%d").timetuple())
+
 
 def checkDate(ts):
     currentDT = time.mktime(datetime.datetime.now().timetuple())
@@ -33,30 +35,32 @@ def checkDate(ts):
     else:
         return True
 
+
 def checkUsername(un):
     if un.isalpha():
         return True
     else:
         return False
 
-def respond(err, res=None):
+
+def respond(err=False, res=None):
     return {
+        'isBase64Encoded': False,
         'statusCode': '400' if err else '204',
-        'body': {
-            'message': res if res else 'No Content'
-        },
+        'body': json.dumps(res),
         'headers': {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
     }
+
 
 def handler(event, context):
     """
     This function is for putting new username and dateOfBirth
     """
-    print("Received event: " + json.dumps(event, indent=2))
-    un = event['ResourceProperties']['username']
-    dob = event['ResourceProperties']['dateOfBirth']
+    #print("Received event: " + json.dumps(event, indent=2))
+    dob = event['queryStringParameters']['dateOfBirth']
+    un = event['pathParameters']['proxy']
     try:
         if not checkUsername(un):
             logger.error("ERROR: Username must contain only letters. ")
@@ -75,12 +79,12 @@ def handler(event, context):
             cur.execute('insert into birthday (username, dateofbirth, unixepoch) values("'+un+'", "'+dob+'",'+ str ( convert_timestamp(dob)) +')')
             logger.info("INFO: Added to RDS MySQL table ")
             conn.commit()
-            return respond(None,None)
-
+            return respond(False,"No Content")
     except ValueError:
         logger.error('Value error occured.')
+        return respond(True, "Value error")
     except:
         logger.error("ERROR: An exception occured. ")
-        return respond(True, "Lambda error")
+        return respond(True, "Lambda function error")
 
 

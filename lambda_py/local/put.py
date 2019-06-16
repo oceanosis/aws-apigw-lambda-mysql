@@ -1,5 +1,5 @@
 #!/usr/local/bin/python3.6
-import sys, os
+import sys
 import logging
 import rds_config_local
 import pymysql

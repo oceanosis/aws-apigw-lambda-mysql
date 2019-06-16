@@ -1,0 +1,8 @@
+{
+    "pathParameters": {
+        "proxy": "testuserg"
+    },
+    "queryStringParameters":{
+        "dateOfBirth": "2018-01-01"
+    }
+}

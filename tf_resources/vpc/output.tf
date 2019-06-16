@@ -13,3 +13,4 @@ output "public_subnet_ids" {
 output "private_availability_zones" {
   value = ["${aws_subnet.main-private-1.availability_zone}","${aws_subnet.main-private-2.availability_zone}","${aws_subnet.main-private-3.availability_zone}"]
 }
+

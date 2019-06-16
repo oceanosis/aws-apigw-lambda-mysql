@@ -11,4 +11,34 @@ export TF_VAR_RDS_USERNAME="root"
 export TF_VAR_RDS_PASSWORD="password"
 export TF_VAR_RDS_DBNAME="hwdb"
 export TF_VAR_RDS_MULTI_AZ="false" # Change it to 'true' to have HA...
+export TF_VAR_PATH_TO_PUBLIC_KEY="$HOME/.ssh/automation.pub"
+export TF_VAR_PATH_TO_PRIVATE_KEY="$HOME/.ssh/automation"
+```
+
+# Run deployment (pipeline)
+```sh
+make deploy
+make lambda_deploy
+make destroy
+make destroy_all
+make test API_URL={{ API URL }}
+```
+
+# TEST API
+```sh
+curl -v -X PUT https://{{ API URL }}/prod/hello/username \
+-H 'content-type: application/json' \
+-d '{ "dateOfBirth": "2018-01-01" }'
+
+curl -v -X GET https://{{ API URL }}/prod/hello/username \
+-H 'content-type: application/json'
+```
+
+# TEST LAMBDA
+```sh
+aws lambda invoke --function-name put_helloworld \
+--invocation-type RequestResponse --payload file://test/lambda_put.json out_put.txt
+
+aws lambda invoke --function-name get_helloworld \
+--invocation-type RequestResponse --payload file://test/lambda_get.json out_get.txt
 ```

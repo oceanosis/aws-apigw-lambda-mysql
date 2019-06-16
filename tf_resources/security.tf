@@ -6,7 +6,7 @@ resource "aws_security_group" "public-sg" {
       from_port = 0
       to_port = 0
       protocol = "-1"
-      cidr_blocks = ["${var.trusted_ip_range}"]
+      cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -15,31 +15,16 @@ resource "aws_security_group" "public-sg" {
       protocol = "tcp"
       cidr_blocks = ["${var.trusted_ip_range}"]
   } 
-  ingress {
-      from_port = 80
-      to_port = 80
-      protocol = "tcp"
-      cidr_blocks = ["${var.trusted_ip_range}"]
-  } 
   tags = {
     Name = "public-sg"
   }
 }
-
+/*
 
 resource "aws_network_acl" "public-NACL" {
   vpc_id = "${module.hwvpc.vpc_id}"
   subnet_ids     = "${module.hwvpc.public_subnet_ids}"
 
-  egress {
-    protocol   = "tcp"
-    rule_no    = 100
-    action     = "allow"
-    cidr_block = "${var.trusted_ip_range}"
-    from_port  = 22
-    to_port    = 22
-  }
-
   ingress {
     protocol   = "tcp"
     rule_no    = 100
@@ -48,32 +33,14 @@ resource "aws_network_acl" "public-NACL" {
     from_port  = 22
     to_port    = 22
   }
-  egress {
-    protocol   = "tcp"
-    rule_no    = 110
-    action     = "allow"
-    cidr_block = "${var.trusted_ip_range}"
-    from_port  = 80
-    to_port    = 80
-  }
-
   ingress {
     protocol   = "tcp"
-    rule_no    = 110
+    rule_no    = 115
     action     = "allow"
     cidr_block = "${var.trusted_ip_range}"
-    from_port  = 80
-    to_port    = 80
+    from_port  = 443
+    to_port    = 443
   }
-  egress {
-    protocol   = "tcp"
-    rule_no    = 120
-    action     = "allow"
-    cidr_block = "${var.trusted_ip_range}"
-    from_port  = 32768
-    to_port    = 65535
-  }
-
   ingress {
     protocol   = "tcp"
     rule_no    = 120
@@ -82,10 +49,37 @@ resource "aws_network_acl" "public-NACL" {
     from_port  = 32768
     to_port    = 65535
   }
+  egress {
+    protocol   = "tcp"
+    rule_no    = 115
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 443
+    to_port    = 443
+  }
+  egress {
+    protocol   = "tcp"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 22
+    to_port    = 22
+  }
+
+  egress {
+    protocol   = "tcp"
+    rule_no    = 120
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 32768
+    to_port    = 65535
+  }
+
   tags = {
     Name = "public-acl"
   }
 }
+*/
 
 # PRIVATE
 
@@ -97,20 +91,20 @@ resource "aws_security_group" "private-sg" {
       from_port = 0
       to_port = 0
       protocol = "-1"
-      cidr_blocks = ["10.0.0.0/16"]
+      cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
       from_port = 3306
       to_port = 3306
       protocol = "tcp"
-      security_groups = ["${aws_security_group.public-sg.id}"]              # allowing access from our example instance
+      security_groups = ["${aws_security_group.public-sg.id}"]
   }
   tags = {
     Name = "private-sg"
   }
 }
 
-
+/*
 resource "aws_network_acl" "private-NACL" {
   vpc_id = "${module.hwvpc.vpc_id}"
   subnet_ids     = "${module.hwvpc.private_subnet_ids}"
@@ -136,3 +130,4 @@ resource "aws_network_acl" "private-NACL" {
     Name = "private-acl"
   }
 }
+*/

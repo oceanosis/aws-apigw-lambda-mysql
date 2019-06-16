@@ -95,7 +95,7 @@ resource "aws_internet_gateway" "main-gw" {
 resource "aws_route_table" "main-public" {
     vpc_id = "${aws_vpc.main.id}"
     route {
-        cidr_block = "${var.trusted_ip_range}"
+        cidr_block = "0.0.0.0/0"
         gateway_id = "${aws_internet_gateway.main-gw.id}"
     }
 
@@ -126,6 +126,7 @@ resource "aws_eip" "nat-ip" {
 resource "aws_nat_gateway" "nat-gw" {
     allocation_id = "${aws_eip.nat-ip.id}"
     subnet_id     = "${aws_subnet.main-public-1.id}"
+    depends_on    = ["aws_internet_gateway.main-gw"]
     tags = {
         Name = "main"
     }
@@ -135,7 +136,7 @@ resource "aws_nat_gateway" "nat-gw" {
 resource "aws_route_table" "main-private" {
     vpc_id = "${aws_vpc.main.id}"
     route {
-        cidr_block = "${var.trusted_ip_range}"
+        cidr_block = "0.0.0.0/0"
         gateway_id = "${aws_nat_gateway.nat-gw.id}"
     }
 

@@ -1,9 +1,11 @@
-import sys, os, math
-import logging
-import rds_config
-import pymysql
-import time, datetime
+import datetime
 import json
+import logging
+import pymysql
+import rds_config
+import sys
+import time
+import math
 
 #rds settings
 rds_host  = rds_config.db_host
@@ -22,38 +24,41 @@ except:
 
 logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
 
-def findDiff(ts):
-    currentDT = time.mktime(datetime.datetime.now().timetuple())
-    diff = int(currentDT) - int(ts)
+
+def find_diff(ts):
+    current_date = time.mktime(datetime.datetime.now().timetuple())
+    diff = int(current_date) - int(ts)
     return math.ceil( 365 - ((diff / 60 /60 / 24) % 365.25))
 
-def checkUsername(un):
+
+def check_username(un):
     if un.isalpha():
         return True
     else:
         return False
 
-def respond(err, res=None):
+
+def respond(err=False, res=None):
     return {
-        'statusCode': '400' if err else '204',
-        'body': {
-            'message': res if res else 'No Content'
-        },
+        'isBase64Encoded': False,
+        'statusCode': '400' if err else '200',
+        'body': json.dumps(res),
         'headers': {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
         },
     }
+
 
 def handler(event, context):
     """
     This function is for returning birthday message
     """
 
-    print("Received event: " + json.dumps(event, indent=2))
-    un = event['ResourceProperties']['username']
+    #print("Received event: " + json.dumps(event, indent=2))
+    un = event['pathParameters']['proxy']
 
     try:
-        if not checkUsername(un):
+        if not check_username(un):
             logger.error("ERROR: Username must contain only letters. ")
             return respond(True, "Username must contain only letters. ")
 
@@ -64,16 +69,16 @@ def handler(event, context):
                 return respond(True,"Username does not exist")
             for row in cur:
                 logger.info("INFO: Username found. ")
-                diff = findDiff(row[0])
+                diff = find_diff(row[0])
                 if diff == 365:
                     logger.info("INFO: Happy Birthday"+ un)
-                    return respond(None,"Hello, "+ un +"! Happy birthday")
+                    return respond(False,"Hello, "+ un +"! Happy birthday")
                 else:
                     logger.info("INFO: Birthday of "+ un +" is "+str(diff) +" later")
-                    return respond(None,"Hello, "+ un +"! Your birthday is in "+ str(diff) +" day(s)")
+                    return respond(False,"Hello, "+ un +"! Your birthday is in "+ str(diff) +" day(s)")
     except ValueError:
         logger.error('Value error occured.')
     except:
         logger.error("ERROR: An exception occured. ")
-        return respond(True, "Lambda error")
+        return respond(True, "Lambda function error")
 
