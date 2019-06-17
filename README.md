@@ -1,7 +1,7 @@
-# Helloworld App
+# Helloworld API Gateway - Python Lambda Functions - RDS MySQL DB
   - Serverless Structure
   - It exposes HTTP-based API triggering lambda python scripts.
-  - Put data to MySQL / Get data from MySQL
+  - Push data to MySQL / Get data from MySQL 
   - Automation of "HelloWorld" api gateway - lambda - mysql stack with terraform on AWS
 
 ### Requirements
