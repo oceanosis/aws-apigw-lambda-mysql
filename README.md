@@ -1,4 +1,5 @@
 # Helloworld App
+  - Serverless Structure
   - It exposes HTTP-based API triggering lambda python scripts.
   - Put data to MySQL / Get data from MySQL
   - Automation of "HelloWorld" api gateway - lambda - mysql stack with terraform on AWS
