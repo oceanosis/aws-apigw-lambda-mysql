@@ -8,7 +8,7 @@
 ```sh
 export TF_VAR_AWS_ACCESS_KEY=""
 export TF_VAR_AWS_SECRET_KEY=""
-export TF_VAR_trusted_ip_range="$(curl http://ifconfig.co)/32"   # Ch
+export TF_VAR_trusted_ip_range="$(curl http://ifconfig.co)/32"  # Or give your trusted IP range
 export TF_VAR_RDS_USERNAME="root"
 export TF_VAR_RDS_PASSWORD="password"
 export TF_VAR_RDS_DBNAME="hwdb"
