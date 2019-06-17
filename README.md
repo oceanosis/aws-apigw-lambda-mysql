@@ -4,11 +4,17 @@
   - Put data to MySQL / Get data from MySQL
   - Automation of "HelloWorld" api gateway - lambda - mysql stack with terraform on AWS
 
+### Requirements
+  - username must be {proxy} parameter such as api/prod/hello/{ufuk}
+  - dateOfBirth format: "YYYY-MM-DD" for PUT requests
+  - username must contain only letters
+  - dateOfBirth must be a date before today
+  - and GET birthday response messages and calculations
 
 # Design
 [![aws design](https://github.com/oceanosis/aws-apigw-lambda-mysql/blob/master/docs/aws.png)](https://github.com/oceanosis/aws-apigw-lambda-mysql/blob/master/docs/aws.png)
 
-# AWS Configuration
+## Configure AWS creds
 ```sh
 $ aws configure
    AWS Access Key ID [None]: accesskey
@@ -17,7 +23,7 @@ $ aws configure
    Default output format [None]:
 ```
 
-# Export the following terraform variables
+## Export the following terraform variables
 ```sh
 export TF_VAR_AWS_ACCESS_KEY="accesskey"
 export TF_VAR_AWS_SECRET_KEY="secretkey"
@@ -31,39 +37,43 @@ export TF_VAR_PATH_TO_PUBLIC_KEY="$HOME/.ssh/automation.pub"
 export TF_VAR_PATH_TO_PRIVATE_KEY="$HOME/.ssh/automation"
 ```
 
-# Deploy all resources
+## Deploy all resources
 ```sh
+make help
 make deploy
 ```
 
-# Test API with different user and date options
+## Deploy lambda changes
+```sh
+make lambda_deploy
+```
+
+## Test API with different user and date options
 ```sh
 make put_test API_URL=????.execute-api.eu-west-2.amazonaws.com USER=ufukd DATE=1983-01-01
 make get_test API_URL=????.execute-api.eu-west-2.amazonaws.com USER=ufukd
+```
+
+## Destroy all resources
+```sh
+make destroy
 ```
 
 ---
 
-# Run deployments, tests etc.
-```sh
-make help
-make deploy
-make lambda_deploy
-make destroy
-make put_test API_URL=????.execute-api.eu-west-2.amazonaws.com USER=ufukd DATE=1983-01-01
-make get_test API_URL=????.execute-api.eu-west-2.amazonaws.com USER=ufukd
-```
-
-# TEST API
+### TEST API
 ```sh
 # PUT TEST
-curl -vvv -X PUT https://??????.execute-api.eu-west-2.amazonaws.com/prod/hello/username?dateOfBirth=2018-01-01
+# test with todays date
+curl -vvv -X PUT https://??????.execute-api.eu-west-2.amazonaws.com/prod/hello/ufukd?dateOfBirth=2000-06-17
+# test with a future date
+curl -vvv -X PUT https://??????.execute-api.eu-west-2.amazonaws.com/prod/hello/ufukd?dateOfBirth=2020-06-17
 
 # GET TEST
-curl -vvv https://????????.execute-api.eu-west-2.amazonaws.com/prod/hello/username
+curl -vvv https://????????.execute-api.eu-west-2.amazonaws.com/prod/hello/ufukd
 ```
 
-# TEST LAMBDA
+### TEST LAMBDA
 ```sh
 aws lambda invoke --function-name put_helloworld \
 --invocation-type RequestResponse --payload file://test/lambda_put.json put_response.txt
