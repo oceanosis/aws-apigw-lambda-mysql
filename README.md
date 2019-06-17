@@ -71,5 +71,3 @@ aws lambda invoke --function-name get_helloworld \
 --invocation-type RequestResponse --payload file://test/lambda_get.json get_response.txt
 ```
 
-# What to add more for security?
-
