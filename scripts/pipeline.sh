@@ -20,13 +20,28 @@ terraform apply tf_res.out
 
 export RDS_ENDPOINT=$(terraform output -json | jq ".mysql_endpoint.value" -r)
 
-cat > $BASEDIR/lambda_py/rds_config.py << EOL
+cat > $BASEDIR/lambda_py/lambda_put/rds_config.py << EOL
 db_host = "$RDS_ENDPOINT"
 db_username = "$TF_VAR_RDS_USERNAME"
 db_password = "$TF_VAR_RDS_PASSWORD"
 db_name = "$TF_VAR_RDS_DBNAME"
 EOL
 
+cat > $BASEDIR/lambda_py/lambda_get/rds_config.py << EOL
+db_host = "$RDS_ENDPOINT"
+db_username = "$TF_VAR_RDS_USERNAME"
+db_password = "$TF_VAR_RDS_PASSWORD"
+db_name = "$TF_VAR_RDS_DBNAME"
+EOL
 
+echo "Change RDS Config in functions"
+cd $BASEDIR/lambda_py/lambda_put
+zip -g ../put_helloworld.zip lambda_put.py rds_config.py
 
+cd $BASEDIR/lambda_py/lambda_get
+zip -g ../get_helloworld.zip lambda_get.py rds_config.py
+
+cd $BASEDIR/lambda_py
+aws lambda update-function-code --function-name put_helloworld --zip-file fileb://put_helloworld.zip
+aws lambda update-function-code --function-name get_helloworld --zip-file fileb://get_helloworld.zip
 

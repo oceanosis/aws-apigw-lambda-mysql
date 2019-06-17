@@ -244,7 +244,7 @@ resource "aws_api_gateway_method_response" "options_204" {
   status_code = 204
 
   response_models = {
-    "application/json" = "hwmodel"
+    "application/json" = "Empty"
   }
 
   response_parameters = {
