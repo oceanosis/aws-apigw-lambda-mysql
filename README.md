@@ -2,33 +2,38 @@
   - It exposes HTTP-based API by using python lambda scripts with MySQL.
   - Automation of a simple api gateway - lambda - mysql stack with terraform on AWS
 
+# Design
+
 # EXPORTs;
 ```sh
 export TF_VAR_AWS_ACCESS_KEY=""
 export TF_VAR_AWS_SECRET_KEY=""
-export TF_VAR_trusted_ip_range="$(curl http://ifconfig.co)/32"
+export TF_VAR_trusted_ip_range="$(curl http://ifconfig.co)/32"   # Ch
 export TF_VAR_RDS_USERNAME="root"
 export TF_VAR_RDS_PASSWORD="password"
 export TF_VAR_RDS_DBNAME="hwdb"
-export TF_VAR_RDS_MULTI_AZ="false" # Change it to 'true' to have HA...
+export TF_VAR_RDS_MULTI_AZ="true"          # Change it to 'false' to have single db host...
 export TF_VAR_PATH_TO_PUBLIC_KEY="$HOME/.ssh/automation.pub"
 export TF_VAR_PATH_TO_PRIVATE_KEY="$HOME/.ssh/automation"
 ```
 
-# Run deployment (pipeline)
+# Run deployments, tests etc.
 ```sh
+make help
 make deploy
 make lambda_deploy
 make destroy
-make destroy_all
-make test API_URL={{ API URL }}
+make put_test API_URL=????.execute-api.eu-west-2.amazonaws.com USER=ufukd DATE=1983-01-01
+make get_test API_URL=????.execute-api.eu-west-2.amazonaws.com USER=ufukd
 ```
 
 # TEST API
 ```sh
-curl -v -X PUT https://jpaub6kn8k.execute-api.eu-west-2.amazonaws.com/prod/hello/username?dateOfBirth=2018-01-01
+# PUT TEST
+curl -vvv -X PUT https://??????.execute-api.eu-west-2.amazonaws.com/prod/hello/username?dateOfBirth=2018-01-01
 
-curl -v -X GET https://jpaub6kn8k.execute-api.eu-west-2.amazonaws.com/prod/hello/username
+# GET TEST
+curl -vvv https://????????.execute-api.eu-west-2.amazonaws.com/prod/hello/username
 ```
 
 # TEST LAMBDA
@@ -39,3 +44,6 @@ aws lambda invoke --function-name put_helloworld \
 aws lambda invoke --function-name get_helloworld \
 --invocation-type RequestResponse --payload file://test/lambda_get.json get_response.txt
 ```
+
+# What to add more for security?
+

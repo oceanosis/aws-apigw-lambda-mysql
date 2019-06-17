@@ -1,0 +1,1 @@
+{"isBase64Encoded": false, "statusCode": "400", "body": "\"Username already exists\"", "headers": {"Content-Type": "application/json"}}

@@ -14,11 +14,11 @@ variable "ami_id" {
 variable "trusted_ip_range" {}
 
 variable "RDS_MULTI_AZ" {
-  default = "false"
+  default = "true"
 }
 
 variable "rds_instance_type" {
-  default = "db.t2.micro"
+  default = "db.t2.medium"
 }
 
 variable "RDS_USERNAME" {}

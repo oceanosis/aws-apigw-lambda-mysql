@@ -55,19 +55,21 @@ def handler(event, context):
     """
 
     #print("Received event: " + json.dumps(event, indent=2))
-    un = event['pathParameters']['proxy']
-
     try:
+        if event['pathParameters']['proxy']:
+            un = event['pathParameters']['proxy']
+
+
         if not check_username(un):
             msg = "Username must contain only letters."
-            logger.error("ERROR:  "+ msg)
+            logger.error("ERROR:  " + msg)
             return respond(True, msg)
 
         with conn.cursor() as cur:
             cur.execute('select unixepoch from birthday where username = "' + un + '" ')
             if cur.rowcount == 0:
                 msg = "Username does not exist"
-                logger.error("ERROR:  "+ msg)
+                logger.error("ERROR:  " + msg)
                 return respond(True, msg)
             for row in cur:
                 logger.info("INFO: Username found. ")
@@ -79,8 +81,12 @@ def handler(event, context):
         conn.commit()
         logger.info("INFO: " + msg)
         return respond(False, msg)
+    except KeyError:
+        logger.error('Username was not passed as path')
+        return respond(True, "Username was not passed as proxy path")
     except ValueError:
         logger.error('Value error occured.')
+        return respond(True, "Value error occured.")
     except:
         logger.error("ERROR: An exception occured. ")
         return respond(True, "Lambda function error")

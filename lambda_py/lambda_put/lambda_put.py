@@ -60,9 +60,13 @@ def handler(event, context):
     This function is for putting new username and dateOfBirth
     """
     #print("Received event: " + json.dumps(event, indent=2))
-    dob = event['queryStringParameters']['dateOfBirth']
-    un = event['pathParameters']['proxy']
+
     try:
+        if event['queryStringParameters']['dateOfBirth']:
+            dob = event['queryStringParameters']['dateOfBirth']
+        if event['pathParameters']['proxy']:
+            un = event['pathParameters']['proxy']
+
         if not checkUsername(un):
             msg = "Username must contain only letters."
             logger.error("ERROR:  " + msg)
@@ -85,6 +89,9 @@ def handler(event, context):
         logger.info("INFO: Added to RDS MySQL table ")
         conn.commit()
         return respond(False,"No Content")
+    except KeyError:
+        logger.error('Username or dateOfBirth was not passed')
+        return respond(True, "Username or dateOfBirth was not passed")
     except ValueError:
         logger.error('Value error occured.')
         return respond(True, "Value error")
