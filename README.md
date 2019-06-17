@@ -1,4 +1,5 @@
 # Helloworld App
+  - Serverless Structure
   - It exposes HTTP-based API triggering lambda python scripts.
   - Put data to MySQL / Get data from MySQL
   - Automation of "HelloWorld" api gateway - lambda - mysql stack with terraform on AWS
@@ -70,6 +71,4 @@ aws lambda invoke --function-name put_helloworld \
 aws lambda invoke --function-name get_helloworld \
 --invocation-type RequestResponse --payload file://test/lambda_get.json get_response.txt
 ```
-
-# What to add more for security?
 
