@@ -1,8 +1,11 @@
 # Helloworld App
-  - It exposes HTTP-based API by using python lambda scripts with MySQL.
-  - Automation of a simple api gateway - lambda - mysql stack with terraform on AWS
+  - It exposes HTTP-based API triggering lambda python scripts.
+  - Put data to MySQL / Get data from MySQL
+  - Automation of "HelloWorld" api gateway - lambda - mysql stack with terraform on AWS
+
 
 # Design
+
 
 # EXPORTs;
 ```sh
