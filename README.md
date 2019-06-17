@@ -5,7 +5,7 @@
 
 
 # Design
-
+[![aws design](https://github.com/oceanosis/aws-apigw-lambda-mysql/blob/master/docs/aws.png)](https://github.com/oceanosis/aws-apigw-lambda-mysql/blob/master/docs/aws.png)
 
 # AWS Configuration
 ```sh
